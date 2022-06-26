@@ -13,6 +13,7 @@ module.exports = {
       )
       .catch((err) => next(err));
   },
+
   createUser(req, res, next) {
     return db
       .createUser(req.body.userName, ROLES.regular)
@@ -24,7 +25,7 @@ module.exports = {
 
   getUsers(req, res, next) {
     const getUserQuery = new GetUserQuery(
-      10,
+      req.params?.limit || 10,
       Number(req.query.skip || 0),
       req.query.searchFilter
     );
@@ -53,18 +54,5 @@ module.exports = {
         user ? res.status(200).json(user) : next({ nF: "User" })
       )
       .catch((err) => next(err));
-  },
-
-  signup(req, res, next) {
-    const user = req.body;
-    return db
-      .createUser(user.name, user.email, user.password, ROLES.regular)
-      .then((user) => {
-        return res.status(201).json({
-          // user: clearUnneededDataFromPayload(user),
-          token: getToken(user._id, user.role),
-        });
-      })
-      .catch((e) => next(e));
   },
 };

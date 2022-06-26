@@ -21,7 +21,6 @@ const User = () => {
     };
     try {
       let res = await ApiService.getUserEntries(payload);
-      debugger;
       setUserEntries(res?.foodEntries);
       setEntryCount(res?.count);
     } catch (error) {
@@ -94,6 +93,9 @@ const User = () => {
       <FoodEntryModal
         toggle={() => setEntryModal(!entryModal)}
         isOpen={entryModal}
+        refetch={() => {
+          getUserEntries();
+        }}
       />
     </div>
   );

@@ -6,9 +6,9 @@ const MainLayout = ({ children }) => {
     <Row>
       <Col md="2"></Col>
       <Col md="8">
-        <h2 className="bg-success text-center text-light py-3 font-weight-bold mb-0 background-hd">
+        <h1 className="bg-success text-center text-light py-5 font-weight-bold mb-0 background-hd">
           Calories App
-        </h2>
+        </h1>
         {children}
       </Col>
       <Col md="2"></Col>

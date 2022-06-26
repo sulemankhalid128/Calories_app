@@ -16,7 +16,7 @@ module.exports = {
 
   getFoodEntries(req, res, next) {
     const getFoodEntries = new GetFoodEntryQuery(
-      10,
+      req.query.limit || 10,
       Number(req.query.skip || 0),
       req.query.searchFilter,
       req.params?.id
@@ -53,6 +53,7 @@ module.exports = {
       )
       .catch((err) => next(err));
   },
+
   createFood(req, res, next) {
     return db
       .createFoodEntry({

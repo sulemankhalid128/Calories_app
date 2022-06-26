@@ -48,17 +48,30 @@ export const ApiService = {
     return axios.delete(`users/${id}`, { headers: getAuthHeaders() });
   },
 
-  getUserEntries({ id, limit = 10, skip = 0, searchTerm = "" }) {
+  getUserEntries({ userId, limit = 10, skip = 0, searchTerm = "" }) {
+    debugger;
     const params = {};
     params.skip = skip.toString();
     params.limit = limit.toString();
     params.searchTerm = searchTerm;
-    return axios.get(`/user/entries/${id}`, { params });
+    return axios.get(`/user/entries/${userId}`, { params });
+  },
+  getUsers({ limit = 10, skip = 0, searchTerm = "" }) {
+    const params = {};
+    params.skip = skip.toString();
+    params.limit = limit.toString();
+    params.searchTerm = searchTerm;
+    debugger;
+    return axios.get(`/users`, { params });
   },
 
   updateUserEntry(id, data) {
     debugger;
     return axios.put(`/update/user/entry/${id}`, data);
+  },
+
+  deleteUserFoodEntry(id) {
+    return axios.delete(`/remove/user/entry/${id}`);
   },
 
   getMyPreviouslyUsedBikes({ skip = 0 }) {
@@ -166,10 +179,6 @@ export const ApiService = {
 
   addBike(data) {
     return axios.post(`bikes`, data, { headers: getAuthHeaders() });
-  },
-
-  deleteBike(bikeId) {
-    return axios.delete(`bikes/${bikeId}`, { headers: getAuthHeaders() });
   },
 
   forgottenPassword(email) {

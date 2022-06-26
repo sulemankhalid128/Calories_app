@@ -8,36 +8,53 @@ import NoDataFound from "../../common-component/NoDataFound";
 import { ApiService } from "../../axios-config";
 import { dateFormate } from "../../utils/statics";
 import FoodEntryModal from "../../common-component/FoodEntryModal";
+import { toast } from "react-toastify";
+import ConfirmPopUp from "../../common-component/Confermation";
+import Loader from "../../common-component/Loader";
 
-const AllUserFood = () => {
+const AllUserFood = ({ match }) => {
   const [userEntries, setUserEntries] = useState([]);
   const [entryCount, setEntryCount] = useState(0);
   const [entryData, setEntryData] = useState(null);
   const [editEntryModal, setEditEntryModal] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const getUserEntries = async () => {
-    debugger;
-    let id = "62b8446aa04fa7783e4d7dab";
-    let payload = {
-      limit: 10,
-      skip: 0,
-      id,
-    };
     try {
+      setIsLoading(true);
+      let payload = {
+        limit: 10,
+        skip: 0,
+        userId: match?.params?.id,
+      };
       let res = await ApiService.getUserEntries(payload);
-      debugger;
       setUserEntries(res?.foodEntries);
       setEntryCount(res?.count);
+      setIsLoading(false);
     } catch (error) {
-      debugger;
+      setIsLoading(false);
+      console.log("error::", error);
+      toast.error("Error while fetching entries!");
     }
   };
 
+  const deleteEntry = async () => {
+    try {
+      await ApiService.deleteUserFoodEntry(entryData?._id);
+      toast.success("Entry Successfully Deleted!");
+      setDeleteModal(false);
+      await getUserEntries();
+    } catch (error) {
+      console.log("error::", error);
+      toast.error("Error while delete entries!");
+    }
+  };
   useEffect(() => getUserEntries(), []);
   return (
     <div>
       <div>
-        <h2 className="my-5">Suleman Food History</h2>
+        <h2 className="my-5">Food History</h2>
 
         <TableLayout
           TableHeader={() => (
@@ -51,6 +68,15 @@ const AllUserFood = () => {
             </React.Fragment>
           )}
           TableContent={() => {
+            if (isLoading) {
+              return (
+                <tr>
+                  <td colSpan={6}>
+                    <Loader />
+                  </td>
+                </tr>
+              );
+            }
             if (userEntries?.length) {
               return userEntries.map((item, index) => (
                 <tr>
@@ -73,10 +99,14 @@ const AllUserFood = () => {
                     >
                       <img src={EDIT_ICON} alt="alt" width={18} />
                     </Button>
-                    <Button className="bg-transparent border-0 shadow-none">
-                      <img src={VIEW_ICON} alt="alt" width={18} />
-                    </Button>
-                    <Button className="bg-transparent border-0 shadow-none">
+
+                    <Button
+                      className="bg-transparent border-0 shadow-none"
+                      onClick={() => {
+                        setEntryData(item);
+                        setDeleteModal(!deleteModal);
+                      }}
+                    >
                       <img src={DELETE_ICON} alt="alt" width={18} />
                     </Button>
                   </td>
@@ -85,7 +115,7 @@ const AllUserFood = () => {
             }
             return (
               <tr>
-                <td colSpan={5}>
+                <td colSpan={6}>
                   <NoDataFound />
                 </td>
               </tr>
@@ -99,6 +129,20 @@ const AllUserFood = () => {
         toggle={() => setEditEntryModal(!editEntryModal)}
         data={entryData}
         refetch={() => getUserEntries()}
+      />
+      <ConfirmPopUp
+        confirmText="Are you sure you want to delete"
+        isOpen={deleteModal}
+        toggle={() => {
+          setDeleteModal(!deleteModal);
+        }}
+        confirmAction={deleteEntry}
+        modalHeading="Delete Record"
+        extraProp={entryData?.foodName}
+        secondaryText=" entry?"
+        btnText="Delete"
+        btnColor="primary"
+        className="revampDialog revampDialogWidth"
       />
     </div>
   );

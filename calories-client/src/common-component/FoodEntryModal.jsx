@@ -21,9 +21,8 @@ const FoodEntryModal = ({ toggle, isOpen, data, refetch }) => {
   const [currentDateTimeLocal, setCurrentDateTimeLocal] = useState(null);
 
   const createUpdateFoodEntry = async (values) => {
-    debugger;
     try {
-      values.userId = "62b8446aa04fa7783e4d7dab";
+      values.userId = "62b848fd58f737232bc5d052";
       values.calorie = parseInt(values?.calorie);
       setLoading(true);
       let res;
@@ -32,7 +31,7 @@ const FoodEntryModal = ({ toggle, isOpen, data, refetch }) => {
       } else {
         res = await ApiService.updateUserEntry(data?._id, values);
       }
-
+      debugger;
       toast.success(
         data ? "Entry Update Successfully!" : "Entry Created Successfully!"
       );
@@ -117,18 +116,6 @@ const FoodEntryModal = ({ toggle, isOpen, data, refetch }) => {
               <Label for="foodDate">
                 Date & time<span className="text-danger">*</span>
               </Label>
-
-              {/* <Input
-              type="datetime-local"
-              name="foodDate"
-              innerRef={register({
-                required: {
-                  value: true,
-                  message: "Please enter the date & time!",
-                },
-              })}
-              aria-invalid={errors?.foodDate ? "true" : "false"}
-            /> */}
 
               <Input
                 defaultValue={currentDateTimeLocal}

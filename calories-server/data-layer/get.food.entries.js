@@ -1,10 +1,11 @@
 const foodEntryModel = require("../modals/food.entry.modal");
 
 module.exports = class getFoodEntryQuery {
-  constructor(limit, skip, searchFilter, id) {
+  constructor(limit, skip, searchFilter, userId) {
     this.limit = limit;
     this.skip = skip;
     this.query = {};
+    this.query.userId = userId;
     if (searchFilter)
       this.query.foodName = { $regex: RegExp(`.*${searchFilter}.*`) };
   }

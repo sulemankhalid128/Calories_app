@@ -14,9 +14,7 @@ module.exports = class getUserQuery {
       .find(this.query)
       .limit(this.limit)
       .skip(this.skip)
-      .select(
-        "_id name email role active isTrackingDisplayed maxCalories googleId googleEmail facebookId facebookEmail"
-      )
+      .select("_id name role")
       .lean()
       .exec();
   }

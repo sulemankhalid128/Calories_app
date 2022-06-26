@@ -1,14 +1,51 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { Button, Card, CardBody, Col, Row } from "reactstrap";
 import NoDataFound from "../../common-component/NoDataFound";
+import Loader from "../../common-component/Loader";
 import TableLayout from "../../common-component/TableLayout";
 import DELETE_ICON from "../../assets/images/deleteIcon.svg";
-import EDIT_ICON from "../../assets/images/editIcon.svg";
 import VIEW_ICON from "../../assets/images/viewIcon.svg";
+import { ApiService } from "../../axios-config";
+import ConfirmPopUp from "../../common-component/Confermation";
+import { toast } from "react-toastify";
 
 const Admin = () => {
-  const { history } = useHistory();
+  const [users, setUsers] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [userCount, setUserCount] = useState(0);
+  const [userRecord, setUserRecord] = useState(null);
+
+  const getUsers = async () => {
+    try {
+      setIsLoading(true);
+      let res = await ApiService.getUsers({ limit: 10, skip: 0 });
+      setUsers(res?.users);
+      setUserCount(res?.count);
+      setIsLoading(false);
+      debugger;
+    } catch (error) {
+      setIsLoading(false);
+      console.log("error::", error);
+      debugger;
+    }
+  };
+
+  const deleteUser = async () => {
+    try {
+      await ApiService.deleteUser(userRecord?._id);
+      toast.success("User Successfully Deleted!");
+      setDeleteModal(false);
+      await getUsers();
+    } catch (error) {
+      console.log("error::", error);
+      toast.error("Error while delete entries!");
+    }
+  };
+
+  useEffect(() => getUsers(), []);
+
   return (
     <div>
       <Row className="my-3">
@@ -35,49 +72,78 @@ const Admin = () => {
       <TableLayout
         TableHeader={() => (
           <React.Fragment>
-            <th>#</th>
+            <th>#Id</th>
             <th> Name</th>
             <th> Actions</th>
           </React.Fragment>
         )}
         TableContent={() => {
-          if (true) {
-            return [1, 2, 3, 4, 5, 5, 4].map((item, index) => (
+          if (isLoading) {
+            return (
               <tr>
-                <th scope="row">{index + 1}</th>
+                <td colSpan={3}>
+                  <Loader />
+                </td>
+              </tr>
+            );
+          }
+          if (!isLoading && users?.length) {
+            debugger;
+            return users.map((item, index) => (
+              <tr key={index}>
+                <th scope="row">{item?._id}</th>
                 <td>
                   <Link
                     to={`/admin/user/foods/${item?._id}`}
                     className="text-decoration-none"
                   >
-                    Mark
+                    {item?.name}
                   </Link>
                 </td>
                 <td>
-                  {/* <Button className="bg-transparent border-0 shadow-none">
-                    <img src={EDIT_ICON} alt="alt" width={18} />
-                  </Button> */}
                   <Link
                     className="bg-transparent border-0 shadow-none"
-                    to={`/admin/user/foods/${12}`}
+                    to={`/admin/user/foods/${item?._id}`}
                   >
                     <img src={VIEW_ICON} alt="alt" width={18} />
                   </Link>
-                  <Button className="bg-transparent border-0 shadow-none">
+                  <Button
+                    className="bg-transparent border-0 shadow-none"
+                    onClick={() => {
+                      setUserRecord(item);
+                      setDeleteModal(!deleteModal);
+                    }}
+                  >
                     <img src={DELETE_ICON} alt="alt" width={18} />
                   </Button>
                 </td>
               </tr>
             ));
           }
-          return (
-            <tr>
-              <td colSpan={2}>
-                <NoDataFound />
-              </td>
-            </tr>
-          );
+          if (!users?.length && !isLoading) {
+            return (
+              <tr>
+                <td colSpan={3}>
+                  <NoDataFound />
+                </td>
+              </tr>
+            );
+          }
         }}
+      />
+      <ConfirmPopUp
+        confirmText="Are you sure you want to delete"
+        isOpen={deleteModal}
+        toggle={() => {
+          setDeleteModal(!deleteModal);
+        }}
+        confirmAction={deleteUser}
+        modalHeading="Delete Record"
+        extraProp={userRecord?.name}
+        secondaryText="?"
+        btnText="Delete"
+        btnColor="primary"
+        className="revampDialog revampDialogWidth"
       />
     </div>
   );

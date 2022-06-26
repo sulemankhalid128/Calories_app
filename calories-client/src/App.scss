@@ -40,3 +40,21 @@ p {
   background-color: #deebdd;
   background-image: linear-gradient(315deg, #deebdd 0%, #bbdbbe 74%);
 }
+
+.loader {
+  min-height: 50vh;
+}
+.loader .spinner-border {
+  display: inline-block;
+  width: 5rem;
+  height: 5rem;
+  vertical-align: -0.125em;
+  border: 0.25em solid #2db02d;
+  border-right-color: #70161600;
+  border-radius: 50%;
+  animation: 0.75s linear infinite spinner-border;
+}
+
+.cursor-pointer {
+  cursor: "pointer";
+}
