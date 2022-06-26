@@ -1,0 +1,42 @@
+@import url("https://fonts.googleapis.com/css?family=Jura:400");
+* {
+  font-family: Arial;
+  font-weight: 400;
+}
+body {
+  margin: 0;
+  padding: 0;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+}
+
+.auth-layout {
+  min-height: 100vh;
+}
+.auth-layout .auth-with {
+  min-width: 25vw;
+}
+
+.background {
+  background-image: url("./assets//images/backgroung.webp");
+  background-repeat: no-repeat;
+  // background-position: right top;
+  // background-attachment: fixed;
+}
+
+.background-hd {
+  background-color: #3bb78f;
+  background-image: linear-gradient(315deg, #3bb78f 0%, #0bab64 74%);
+}
+
+.stats-bg {
+  background-color: #deebdd;
+  background-image: linear-gradient(315deg, #deebdd 0%, #bbdbbe 74%);
+}
