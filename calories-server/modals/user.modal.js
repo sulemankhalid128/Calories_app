@@ -9,7 +9,12 @@ const roles_enum = {
 
 const usersSchema = new Schema({
   name: { type: String, required: true },
-  role: { type: String, enum: roles_enum, required: true, default: "regular" },
+  token: { type: String, required: false },
+  threshold: {
+    type: Number,
+    default: 2100,
+  },
+  role: { type: String, enum: roles_enum, default: "regular" },
 });
 
 module.exports = mongoose.model("User", usersSchema);

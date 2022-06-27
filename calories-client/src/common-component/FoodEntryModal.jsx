@@ -11,13 +11,14 @@ import {
   ModalBody,
   ModalFooter,
   ModalHeader,
+  Spinner,
 } from "reactstrap";
 import { ApiService } from "../axios-config";
 import { toast, ToastContainer } from "react-toastify";
 
 const FoodEntryModal = ({ toggle, isOpen, data, refetch }) => {
   const { register, errors, handleSubmit, reset } = useForm();
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setLoading] = useState(false);
   const [currentDateTimeLocal, setCurrentDateTimeLocal] = useState(null);
 
   const createUpdateFoodEntry = async (values) => {
@@ -31,7 +32,9 @@ const FoodEntryModal = ({ toggle, isOpen, data, refetch }) => {
       } else {
         res = await ApiService.updateUserEntry(data?._id, values);
       }
-      debugger;
+      if (res?.user?.token) {
+        localStorage.setItem("token", res?.user?.token);
+      }
       toast.success(
         data ? "Entry Update Successfully!" : "Entry Created Successfully!"
       );
@@ -119,8 +122,9 @@ const FoodEntryModal = ({ toggle, isOpen, data, refetch }) => {
 
               <Input
                 defaultValue={currentDateTimeLocal}
-                step="2"
-                // min={data ? null : new Date().toISOString().substring(0, 19)}
+                step="any"
+                max={moment().format("YYY-MM-DDTHH:mm:ss.SSS")}
+                min={null}
                 type="datetime-local"
                 name="foodDate"
                 innerRef={register({
@@ -155,7 +159,8 @@ const FoodEntryModal = ({ toggle, isOpen, data, refetch }) => {
             <Button color="secondary" onClick={toggle}>
               Cancel
             </Button>
-            <Button color="success">
+            <Button color="success" disabled={isLoading}>
+              {isLoading && <Spinner size="sm" />}{" "}
               {data ? "Edit Entry" : "Save Entry"}
             </Button>{" "}
           </ModalFooter>

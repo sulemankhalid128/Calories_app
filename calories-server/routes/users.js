@@ -1,4 +1,6 @@
 const db = require("../data-layer/user.db");
+const jwt = require("jsonwebtoken");
+
 const successMessage = require("../utilities/utility").successMessageWrapper;
 const GetUserQuery = require("../data-layer/get.user.db");
 const ROLES = require("../utilities/roles.constant");
@@ -14,12 +16,33 @@ module.exports = {
       .catch((err) => next(err));
   },
 
-  createUser(req, res, next) {
+  createGuestUser(req, res, next) {
+    let userName = req.body?.userName;
+    let role = req.body?.role;
     return db
-      .createUser(req.body.userName, ROLES.regular)
-      .then((user) =>
-        user ? res.status(200).json(user) : next({ nF: "User" })
-      )
+      .createUser(userName, role)
+      .then((user) => {
+        // token ? res.status(200).json(user) : next({ nF: "User" })
+        console.log("user", user?._id, "name", user?.name, "role", user?.role);
+
+        let token = jwt.sign(
+          {
+            _id: user?._id,
+            userName: user?.name,
+            role: user?.role,
+          },
+          "MY_SECRET_KEY",
+          {
+            expiresIn: 60 * 60 * 24 * 7,
+          }
+        );
+        if (token) {
+          db.updateUserInfo(user?._id, { token }).then((user) => {
+            console.log("updateUser", user?._id, "token:::::::", user?.token);
+            (req.user = user), next();
+          });
+        }
+      })
       .catch((err) => next(err));
   },
 
@@ -54,5 +77,18 @@ module.exports = {
         user ? res.status(200).json(user) : next({ nF: "User" })
       )
       .catch((err) => next(err));
+  },
+
+  generateToken(req, res, next) {
+    const user = req.body;
+    let token = getToken(user._id, user.role);
+    return db
+      .updateUserInfo(user._id, { token })
+      .then((user) => {
+        return res.status(201).json({
+          token: token,
+        });
+      })
+      .catch((e) => next(e));
   },
 };

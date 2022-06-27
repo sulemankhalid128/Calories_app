@@ -1,9 +1,10 @@
+const { getToken } = require("../core/authentication");
 const usersModel = require("../modals/user.modal");
+const ROLES = require("../utilities/roles.constant");
 
 module.exports = {
-  createUser(name, role) {
+  createUser(name, role = ROLES.regular) {
     const newUser = new usersModel({ name, role });
-    newUser.role = role;
     return newUser.save();
   },
 

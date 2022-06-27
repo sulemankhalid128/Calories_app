@@ -13,11 +13,11 @@ const User = () => {
   const [userEntries, setUserEntries] = useState([]);
   const [entryCount, setEntryCount] = useState(0);
   const getUserEntries = async () => {
-    let id = "62b8446aa04fa7783e4d7dab";
+    let id = "62b848fd58f737232bc5d052";
     let payload = {
       limit: 10,
       skip: 0,
-      id,
+      userId: id,
     };
     try {
       let res = await ApiService.getUserEntries(payload);
@@ -46,7 +46,7 @@ const User = () => {
           </FormGroup>
           <div className="ms-3">
             <Button
-              className="background-hd border-0"
+              className="background-hd border-0 shadow-none"
               onClick={() => setEntryModal(!entryModal)}
             >
               Add Entry

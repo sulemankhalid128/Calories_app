@@ -19,7 +19,7 @@ module.exports = {
       req.query.limit || 10,
       Number(req.query.skip || 0),
       req.query.searchFilter,
-      req.params?.id
+      req?.decoded?._id
     );
     return Promise.all([
       getFoodEntries.getFoodEntries(),
@@ -61,10 +61,12 @@ module.exports = {
         price: req.body.price,
         calorie: req.body.calorie,
         foodDate: req.body.foodDate,
-        userId: req.body.userId,
+        userId: req.user?._id || req?.decoded?._id,
       })
       .then((entry) =>
-        entry ? res.status(200).json(entry) : next({ nF: "Food Entry" })
+        entry
+          ? res.status(200).json(req?.user ? { user: req.user } : entry)
+          : next({ nF: "Food Entry" })
       )
       .catch((err) => next(err));
   },

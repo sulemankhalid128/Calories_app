@@ -5,8 +5,6 @@ import AppContextProvider from "./context";
 import { ToastContainer } from "react-toastify";
 import PrivateRoute from "./auth/PrivateRoute";
 import { privateRoutesPath } from "./utils/routs";
-import Login from "./auth/Login";
-import SignUp from "./auth/SignUp";
 
 // Style Sheets
 // import "./App.css";
@@ -27,14 +25,13 @@ function App() {
         <Router>
           <Switch>
             <Route path="/" exact component={User} />
-            <Route path="/signup" exact component={SignUp} />
             <Route path="/create/user" exact component={CreateUser} />
             <Route path="/admin" exact component={Admin} />
             <Route path="/admin/user/foods/:id" exact component={AllUserFood} />
             {/* {privateRoutesPath.map((item, index) => {
             return <PrivateRoute key={index} {...item} />;
-          })}
-          <PrivateRoute path="*" exact component={Page404} /> */}
+          })} */}
+            <Route path="*" exact component={Page404} />
           </Switch>
         </Router>
         <ToastContainer />
