@@ -4,12 +4,12 @@ const jwt = require("jsonwebtoken");
 const successMessage = require("../utilities/utility").successMessageWrapper;
 const GetUserQuery = require("../data-layer/get.user.db");
 const ROLES = require("../utilities/roles.constant");
-const { getToken } = require("../core/authentication");
+const getToken = require("../core/authentication");
 
 module.exports = {
-  getUser(req, res, next) {
+  findUser(req, res, next) {
     return db
-      .getUserById(req.params.id)
+      .getUserName(req.params.id)
       .then((user) =>
         user ? res.status(200).json(user) : next({ nF: "User" })
       )
@@ -38,7 +38,6 @@ module.exports = {
         );
         if (token) {
           db.updateUserInfo(user?._id, { token }).then((user) => {
-            console.log("updateUser", user?._id, "token:::::::", user?.token);
             (req.user = user), next();
           });
         }
@@ -48,9 +47,8 @@ module.exports = {
 
   getUsers(req, res, next) {
     const getUserQuery = new GetUserQuery(
-      req.params?.limit || 10,
-      Number(req.query.skip || 0),
-      req.query.searchFilter
+      req.query?.limit || 10,
+      Number(req.query.skip || 0)
     );
     return Promise.all([getUserQuery.getUsers(), getUserQuery.getUsersCount()])
       .then(([users, count]) => res.status(200).json({ users, count }))
@@ -63,6 +61,18 @@ module.exports = {
       .then((user) =>
         user ? res.status(200).json(successMessage) : next({ nF: "User" })
       )
+      .catch((err) => next(err));
+  },
+
+  findAdmin(req, res, next) {
+    return db
+      .findAdmin()
+      .then((user) => {
+        if (user && process.env.ADMIN_PASSWORD === req.body.password) {
+          return res.status(200).json(user);
+        }
+        next({ name: "AdminNotValid" });
+      })
       .catch((err) => next(err));
   },
 
@@ -79,15 +89,35 @@ module.exports = {
       .catch((err) => next(err));
   },
 
-  generateToken(req, res, next) {
-    const user = req.body;
-    let token = getToken(user._id, user.role);
+  updateUserLimit(req, res, next) {
     return db
-      .updateUserInfo(user._id, { token })
+      .updateUserInfo(req.params.id, {
+        threshold: parseInt(req.body.threshold),
+      })
+      .then((user) =>
+        user ? res.status(200).json(user) : next({ nF: "User" })
+      )
+      .catch((err) => next(err));
+  },
+
+  refreshToken(req, res, next) {
+    const userId = req.params.id;
+    return db
+      .getUserById(userId)
       .then((user) => {
-        return res.status(201).json({
-          token: token,
-        });
+        let token = jwt.sign(
+          {
+            _id: user?._id,
+            userName: user?.name,
+            role: user?.role,
+          },
+          "MY_SECRET_KEY"
+        );
+        if (token) {
+          db.updateUserInfo(user?._id, { token }).then((user) =>
+            res.status(201).json(user)
+          );
+        }
       })
       .catch((e) => next(e));
   },

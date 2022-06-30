@@ -4,11 +4,7 @@ const errorMessageWrapper = require("../utilities/utility").errorMessageWrapper;
 module.exports = (app) => {
   app.use(function (err, req, res, next) {
     console.log(err);
-    if (err.isJoi) {
-      err.isJoi = undefined;
-      err._object = undefined;
-      return res.status(422).json(err);
-    } else if (err.nF) {
+    if (err.nF) {
       return res
         .status(404)
         .json(errorMessageWrapper(`${err.nF} is not found in our system`));
@@ -16,8 +12,10 @@ module.exports = (app) => {
       return res
         .status(404)
         .json(errorMessageWrapper(`This user does not exist in our system`));
-    else if (err.code === 11000) {
-      return res.status(409).json(errorMessageWrapper("Email already exists"));
+    else if (err.name === "AdminNotValid") {
+      return res
+        .status(401)
+        .json(errorMessageWrapper(`Password for admin not valid!`));
     } else return next(err);
   });
 

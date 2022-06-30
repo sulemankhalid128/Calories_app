@@ -17,6 +17,19 @@ const Admin = () => {
   const [userCount, setUserCount] = useState(0);
   const [userRecord, setUserRecord] = useState(null);
 
+  const getStats = async () => {
+    try {
+      // setIsLoading(true);
+      let res = await ApiService.getStats();
+      // setUsers(res?.users);
+      // setUserCount(res?.count);
+      // setIsLoading(false);
+      debugger;
+    } catch (error) {
+      setIsLoading(false);
+      console.log("error::", error);
+    }
+  };
   const getUsers = async () => {
     try {
       setIsLoading(true);
@@ -24,11 +37,9 @@ const Admin = () => {
       setUsers(res?.users);
       setUserCount(res?.count);
       setIsLoading(false);
-      debugger;
     } catch (error) {
       setIsLoading(false);
       console.log("error::", error);
-      debugger;
     }
   };
 
@@ -44,7 +55,10 @@ const Admin = () => {
     }
   };
 
-  useEffect(() => getUsers(), []);
+  useEffect(() => {
+    getUsers();
+    getStats();
+  }, []);
 
   return (
     <div>
@@ -69,6 +83,8 @@ const Admin = () => {
         </Col>
       </Row>
 
+      <h3 className="mt-5">All User</h3>
+
       <TableLayout
         TableHeader={() => (
           <React.Fragment>
@@ -88,7 +104,6 @@ const Admin = () => {
             );
           }
           if (!isLoading && users?.length) {
-            debugger;
             return users.map((item, index) => (
               <tr key={index}>
                 <th scope="row">{item?._id}</th>
@@ -108,6 +123,7 @@ const Admin = () => {
                     <img src={VIEW_ICON} alt="alt" width={18} />
                   </Link>
                   <Button
+                    disabled={item?.role === "admin"}
                     className="bg-transparent border-0 shadow-none"
                     onClick={() => {
                       setUserRecord(item);

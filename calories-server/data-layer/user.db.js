@@ -11,9 +11,15 @@ module.exports = {
   deleteUser(id) {
     return usersModel.findByIdAndRemove(id).select("_id");
   },
+  findAdmin() {
+    return usersModel.findOne({ tole: ROLES.admin });
+  },
 
   getUserById(_id) {
     return usersModel.findOne({ _id }).select("-__v").exec();
+  },
+  getUserByName(name) {
+    return usersModel.findOne({ name }).select("-__v").exec();
   },
 
   async getUserRoleById(id) {

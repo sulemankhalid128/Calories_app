@@ -6,8 +6,17 @@ module.exports = class getFoodEntryQuery {
     this.skip = skip;
     this.query = {};
     this.query.userId = userId;
-    if (searchFilter)
-      this.query.foodName = { $regex: RegExp(`.*${searchFilter}.*`) };
+    if (searchFilter?.from && searchFilter?.to) {
+      let start = new Date(searchFilter?.from);
+      start.setHours(0, 0, 0, 0);
+
+      let end = new Date(searchFilter?.to);
+      end.setHours(23, 59, 59, 999);
+      this.query.foodDate = {
+        $gte: start,
+        $lte: end,
+      };
+    }
   }
   getFoodEntries() {
     return foodEntryModel

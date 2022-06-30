@@ -1,9 +1,15 @@
-import User from "../Main/users/User";
+import Admin from "../Main/admin/Admin";
+import AllUserFood from "../Main/admin/AllUserFood";
 
 export const privateRoutesPath = [
   {
-    path: "/user",
+    path: "/admin",
     exact: true,
-    element: <User />,
+    component: Admin,
+  },
+  {
+    path: "/admin/user/foods/:id",
+    exact: true,
+    component: AllUserFood,
   },
 ];

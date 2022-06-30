@@ -6,6 +6,7 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var indexRouter = require("./routes/index");
 const errorHandlersMiddleware = require("./core/errorHandler");
+require("dotenv").config();
 
 //Import the mongoose module
 var mongoose = require("mongoose");

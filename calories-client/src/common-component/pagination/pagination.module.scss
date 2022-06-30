@@ -1,0 +1,59 @@
+@import "../../styles/variables";
+@import "../../styles/mixins";
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+
+  @include responsive(1024px) {
+    overflow-x: auto;
+  }
+}
+
+.paginationWrapper {
+  padding: 11px 0px;
+  display: flex;
+  align-items: center;
+}
+
+.separator {
+  cursor: pointer;
+  width: 1rem;
+  margin: 0 0.45rem;
+}
+
+.pageItem {
+  background: transparent;
+  border: none;
+  height: 36px;
+  width: 36px;
+  margin: 0px 2px 0px 0px;
+  border-radius: 50%;
+  font-weight: 400;
+  color: #352e27;
+  font-size: 11px;
+  padding: 0px 3px;
+
+  &:hover {
+    color: #eaa827;
+    background-color: rgba(234, 168, 39, 0.1);
+  }
+
+  &:focus {
+    outline: 0;
+  }
+}
+
+.active {
+  color: #eaa827;
+  min-width: 32px;
+  box-shadow: none;
+  background-color: rgba(234, 168, 39, 0.1);
+}
+
+.sides {
+  &:hover {
+    text-decoration: none;
+    background-color: transparent;
+  }
+}

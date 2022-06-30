@@ -11,10 +11,7 @@ function getToken(_id, userName, role) {
       userName,
       role: role,
     },
-    "MY_SECRET_KEY",
-    {
-      expiresIn: 60 * 60 * 24 * 7,
-    }
+    "MY_SECRET_KEY"
   );
 }
 

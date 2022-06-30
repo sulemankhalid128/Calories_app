@@ -1,0 +1,46 @@
+@import "../../tyles/variables";
+@import "../../styles/mixins";
+
+.pagination-container {
+  padding: 8px;
+  @include flexExactCenter(flex);
+
+  .pagination {
+    margin-bottom: 0px;
+  }
+
+  .page-item {
+    margin: 0px 5px;
+
+    &.disabled {
+      opacity: 0.5;
+    }
+
+    &.active {
+      .page-link {
+        color: $WHITE;
+        background: $PRIMARY_TEXT_COLOR;
+      }
+    }
+
+    &.disabled {
+      .page-link {
+        background-color: $WHITE_EIGHT;
+      }
+    }
+  }
+
+  .page-link {
+    border: 0px;
+    background: transparent;
+    color: $BLACK_FOUR;
+    font-size: 14px;
+    line-height: 20px;
+    border-radius: 4px;
+    padding: 0px;
+    @include flexAlignItemCenter(flex);
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+  }
+}

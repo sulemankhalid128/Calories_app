@@ -7,8 +7,7 @@ const getAuthHeaders = () => ({
 
 // Add a request interceptor
 axios.interceptors.request.use(function (config) {
-  const token = localStorage.getItem("token");
-  debugger;
+  const token = localStorage.getItem("calories_token");
   config.headers.Authorization = token ? `Bearer ${token}` : null;
   return config;
 });
@@ -48,29 +47,43 @@ export const ApiService = {
     return axios.delete(`users/${id}`, { headers: getAuthHeaders() });
   },
 
-  getUserEntries({ userId, limit = 10, skip = 0, searchTerm = "" }) {
-    debugger;
+  getUserEntries({ userId, limit = 10, skip = 0, searchFilter }) {
     const params = {};
     params.skip = skip.toString();
     params.limit = limit.toString();
-    params.searchTerm = searchTerm;
+    params.searchFilter = searchFilter;
     return axios.get(`/user/entries/${userId}`, { params });
   },
-  getUsers({ limit = 10, skip = 0, searchTerm = "" }) {
+
+  getUsers({ limit = 10, skip = 0 }) {
     const params = {};
     params.skip = skip.toString();
     params.limit = limit.toString();
-    params.searchTerm = searchTerm;
-    debugger;
+
     return axios.get(`/users`, { params });
   },
 
   updateUserEntry(id, data) {
-    debugger;
     return axios.put(`/update/user/entry/${id}`, data);
+  },
+
+  validateAdmin(data) {
+    return axios.post(`/admin/validate`, data);
   },
 
   deleteUserFoodEntry(id) {
     return axios.delete(`/remove/user/entry/${id}`);
+  },
+
+  refreshToken(userId) {
+    return axios.post(`/refresh/token/${userId}`);
+  },
+
+  resetLimit(userId, threshold) {
+    return axios.post(`/reset/threshold/${userId}`, { threshold });
+  },
+
+  getStats() {
+    return axios.get(`/get/stats`);
   },
 };

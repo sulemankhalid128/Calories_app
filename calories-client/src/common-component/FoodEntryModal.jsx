@@ -6,6 +6,7 @@ import {
   Form,
   FormGroup,
   Input,
+  InputGroup,
   Label,
   Modal,
   ModalBody,
@@ -14,9 +15,9 @@ import {
   Spinner,
 } from "reactstrap";
 import { ApiService } from "../axios-config";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 
-const FoodEntryModal = ({ toggle, isOpen, data, refetch }) => {
+const FoodEntryModal = ({ toggle, isOpen, data, refetch, setWaring }) => {
   const { register, errors, handleSubmit, reset } = useForm();
   const [isLoading, setLoading] = useState(false);
   const [currentDateTimeLocal, setCurrentDateTimeLocal] = useState(null);
@@ -33,8 +34,13 @@ const FoodEntryModal = ({ toggle, isOpen, data, refetch }) => {
         res = await ApiService.updateUserEntry(data?._id, values);
       }
       if (res?.user?.token) {
-        localStorage.setItem("token", res?.user?.token);
+        localStorage.setItem("calories_token", res?.user?.token);
+        localStorage.setItem("user", JSON.stringify(res?.user));
       }
+      let thresholdWarning =
+        res?.user?.thresholdWarning || res?.entry?.thresholdWarning;
+      let priceWarning = res?.user?.priceWarning || res?.entry?.priceWarning;
+      setWaring({ thresholdWarning, priceWarning });
       toast.success(
         data ? "Entry Update Successfully!" : "Entry Created Successfully!"
       );
@@ -43,17 +49,20 @@ const FoodEntryModal = ({ toggle, isOpen, data, refetch }) => {
       reset();
       toggle();
     } catch (error) {
-      debugger;
       setLoading(false);
     }
   };
 
-  useEffect(() => {
+  const preFillData = () => {
     if (data) {
       data.foodDate = moment(data?.foodDate).format("YYYY-MM-DDTHH:mm");
       reset({ ...data });
+    } else {
+      reset({});
     }
-  }, [data]);
+  };
+
+  useEffect(() => preFillData(), [data]);
 
   useEffect(() => {
     const now = new Date();
@@ -75,7 +84,9 @@ const FoodEntryModal = ({ toggle, isOpen, data, refetch }) => {
     <div>
       <Modal isOpen={isOpen} toggle={toggle} className="modal-lg">
         <Form onSubmit={handleSubmit(createUpdateFoodEntry)}>
-          <ModalHeader toggle={toggle}>Crate Food Entry</ModalHeader>
+          <ModalHeader toggle={toggle}>
+            {data ? "Update" : "Crate"} Food Entry
+          </ModalHeader>
           <ModalBody>
             <FormGroup>
               <Label for="foodName">
@@ -140,18 +151,23 @@ const FoodEntryModal = ({ toggle, isOpen, data, refetch }) => {
               <Label for="price">
                 Price<span className="text-danger">*</span>
               </Label>
-              <Input
-                type="number"
-                name="price"
-                innerRef={register({
-                  required: {
-                    value: true,
-                    message: "Please enter the price!",
-                  },
-                })}
-                aria-invalid={errors?.confirmPass ? "true" : "false"}
-                placeholder="Price"
-              />
+              <div className="d-flex position-relative">
+                <span className="position-absolute addonInput">$</span>
+                <Input
+                  type="number"
+                  name="price"
+                  innerRef={register({
+                    required: {
+                      value: true,
+                      message: "Please enter the price!",
+                    },
+                  })}
+                  aria-invalid={errors?.confirmPass ? "true" : "false"}
+                  placeholder="Price"
+                  style={{ paddingLeft: "20px" }}
+                />
+              </div>
+
               <small className="text-danger">{errors?.price?.message}</small>
             </FormGroup>
           </ModalBody>

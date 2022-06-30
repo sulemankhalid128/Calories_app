@@ -8,9 +8,7 @@ const CreateUser = () => {
   const createUser = async (value) => {
     try {
       let res = await ApiService.createUser(value);
-    } catch (error) {
-      debugger;
-    }
+    } catch (error) {}
   };
   return (
     <Form onSubmit={handleSubmit(createUser)}>

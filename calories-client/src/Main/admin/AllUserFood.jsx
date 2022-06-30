@@ -11,6 +11,8 @@ import FoodEntryModal from "../../common-component/FoodEntryModal";
 import { toast } from "react-toastify";
 import ConfirmPopUp from "../../common-component/Confermation";
 import Loader from "../../common-component/Loader";
+import GoBack from "../../common-component/GoBack";
+import Pagination from "../../common-component/pagination/Index";
 
 const AllUserFood = ({ match }) => {
   const [userEntries, setUserEntries] = useState([]);
@@ -19,6 +21,7 @@ const AllUserFood = ({ match }) => {
   const [editEntryModal, setEditEntryModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const getUserEntries = async () => {
     try {
@@ -54,6 +57,19 @@ const AllUserFood = ({ match }) => {
   return (
     <div>
       <div>
+        <div className="d-flex justify-content-between mt-3 align-items-center">
+          <GoBack url="/admin" />
+          <Button
+            size="sm"
+            className="border-0 shadow-none background-hd "
+            onClick={() => {
+              setEntryData(null);
+              setEditEntryModal(!editEntryModal);
+            }}
+          >
+            Create Entry
+          </Button>
+        </div>
         <h2 className="my-5">Food History</h2>
 
         <TableLayout
@@ -123,6 +139,13 @@ const AllUserFood = ({ match }) => {
           }}
         />
       </div>
+      <Pagination
+        onPageChange={(pageClicked) => {
+          setCurrentPage(pageClicked);
+        }}
+        pageCount={Math.ceil(entryCount / 10)}
+        currentPage={currentPage}
+      />
 
       <FoodEntryModal
         isOpen={editEntryModal}
