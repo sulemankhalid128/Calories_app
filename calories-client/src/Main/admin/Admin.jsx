@@ -76,7 +76,7 @@ const Admin = () => {
         <Col md="12">
           <Card className="stats-bg border-0 shadow-sm">
             <CardBody className="m-2 ">
-              <h4 className="text-light">Last 7 days / Previous Entries </h4>
+              <h4 className="text-light">Last 7 days / Last Week Entries </h4>
               <h5 className="text-light">
                 {stats?.lastSevenDays || 0} / {stats?.previousWeek || 0}
               </h5>
