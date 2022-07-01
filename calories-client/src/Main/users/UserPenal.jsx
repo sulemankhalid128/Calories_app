@@ -81,7 +81,7 @@ const UserPenal = () => {
     <div>
       <div className="d-flex justify-content-between align-items-center my-4">
         <h3>Food Entries</h3>
-        <div className="d-flex">
+        <div className="d-flex mt-3">
           <FormGroup className="d-flex justify-content-center align-items-center">
             <Label className="mx-2">From:</Label>
             <Input
