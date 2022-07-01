@@ -7,6 +7,7 @@ import { getUserLocal } from "../utils/statics";
 const MainLayout = ({ children }) => {
   const [adminModal, setAdminModal] = useState(false);
   let user = getUserLocal();
+  let isAdminPenal = window.location.href.split("/");
   return (
     <Row>
       <Col md="2"></Col>
@@ -25,18 +26,20 @@ const MainLayout = ({ children }) => {
                 As Admin
               </Button>
             )}
-            {user?._id && user?.role === "admin" && (
-              <Button
-                size="sm"
-                className="me-3 bg-transparent"
-                onClick={() => {
-                  let ref = window.location.origin;
-                  window.location.replace(`${ref}/admin`);
-                }}
-              >
-                Admin Penal
-              </Button>
-            )}
+            {user?._id &&
+              user?.role === "admin" &&
+              !isAdminPenal?.includes("admin") && (
+                <Button
+                  size="sm"
+                  className="me-3 bg-transparent"
+                  onClick={() => {
+                    let ref = window.location.origin;
+                    window.location.replace(`${ref}/admin`);
+                  }}
+                >
+                  Admin Penal
+                </Button>
+              )}
             {user?._id && (
               <>
                 <strong className="text-light me-2">User: {user?.name}</strong>
