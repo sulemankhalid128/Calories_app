@@ -105,6 +105,7 @@ const UserPenal = () => {
               <Button
                 className="background-hd border-0 shadow-none mx-3"
                 onClick={() => getUserEntries()}
+                disabled={!(dateFilter?.to && dateFilter.from)}
               >
                 Search
               </Button>
