@@ -1,10 +1,11 @@
 const foodEntryModel = require("../modals/food.entry.modal");
 
 module.exports = class getFoodEntryQuery {
-  constructor(limit, skip, searchFilter, userId) {
+  constructor(limit, skip, searchFilter, userId, sort) {
     this.limit = limit;
     this.skip = skip;
     this.query = {};
+    this.query.sort = parseInt(sort) || -1;
     this.query.userId = userId;
     if (searchFilter?.from && searchFilter?.to) {
       let start = new Date(searchFilter?.from);
@@ -18,9 +19,11 @@ module.exports = class getFoodEntryQuery {
       };
     }
   }
+
   getFoodEntries() {
     return foodEntryModel
       .find(this.query)
+      .sort({ createdAt: this.query.sort })
       .limit(this.limit)
       .skip(this.skip)
       .populate("userId")

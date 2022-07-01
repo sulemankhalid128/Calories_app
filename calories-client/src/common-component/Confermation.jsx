@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Button,
   Col,
@@ -17,7 +17,6 @@ const ConfirmPopUp = ({
   toggle,
   modalHeading,
   btnText,
-  btnColor,
   extraProp,
   secondaryText,
   className,

@@ -10,12 +10,11 @@ import { privateRoutesPath } from "./utils/routs";
 import "../src/App.scss";
 import "bootstrap/dist/css/bootstrap.css";
 import MainLayout from "./layouts/MainLayout";
-import User from "./Main/users/User";
+import User from "./Main/users/UserPenal";
 import "react-toastify/dist/ReactToastify.css";
 import ResetLimitAndToken from "./auth/ResetLimitAndToken";
 
 function App() {
-  console.log(privateRoutesPath);
   return (
     <MainLayout>
       <Router>
@@ -30,6 +29,12 @@ function App() {
           <Route
             key="token"
             path="/reset/token/:id"
+            exact
+            component={ResetLimitAndToken}
+          />
+          <Route
+            key="username"
+            path="/change/user/:name"
             exact
             component={ResetLimitAndToken}
           />

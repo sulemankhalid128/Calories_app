@@ -7,9 +7,9 @@ const ROLES = require("../utilities/roles.constant");
 const getToken = require("../core/authentication");
 
 module.exports = {
-  findUser(req, res, next) {
+  getUserByName(req, res, next) {
     return db
-      .getUserName(req.params.id)
+      .getUserByName(req.query.name)
       .then((user) =>
         user ? res.status(200).json(user) : next({ nF: "User" })
       )
@@ -22,9 +22,6 @@ module.exports = {
     return db
       .createUser(userName, role)
       .then((user) => {
-        // token ? res.status(200).json(user) : next({ nF: "User" })
-        console.log("user", user?._id, "name", user?.name, "role", user?.role);
-
         let token = jwt.sign(
           {
             _id: user?._id,
@@ -73,19 +70,6 @@ module.exports = {
         }
         next({ name: "AdminNotValid" });
       })
-      .catch((err) => next(err));
-  },
-
-  updateUserInfo(req, res, next) {
-    return db
-      .updateUserInfo(req.params.id, {
-        name: req.body.name,
-        email: req.body.email,
-        role: req.body.role,
-      })
-      .then((user) =>
-        user ? res.status(200).json(user) : next({ nF: "User" })
-      )
       .catch((err) => next(err));
   },
 

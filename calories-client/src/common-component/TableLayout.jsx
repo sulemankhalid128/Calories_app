@@ -3,7 +3,7 @@ import { Table } from "reactstrap";
 
 const TableLayout = ({ TableHeader, TableContent }) => {
   return (
-    <Table>
+    <Table hover>
       <thead>
         <tr>
           <TableHeader />

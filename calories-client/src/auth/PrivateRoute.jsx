@@ -1,11 +1,10 @@
 import React from "react";
 import { Redirect, Route } from "react-router-dom";
+import { getUserLocal } from "../utils/statics";
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
   let token = localStorage?.getItem("calories_token");
-  let user = localStorage?.getItem("user");
-  user = JSON.parse(user);
-
+  let user = getUserLocal();
   return (
     <Route
       {...rest}

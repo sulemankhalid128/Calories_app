@@ -5,3 +5,13 @@ export const dateFormate = (dateStr) => {
   let date = new Date(dateStr);
   return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
 };
+
+export const getUserLocal = () => {
+  let user = localStorage?.getItem("user");
+  return JSON.parse(user);
+};
+export const setUserLocal = (res) => {
+  localStorage.clear();
+  localStorage.setItem("calories_token", res?.token);
+  localStorage.setItem("user", JSON.stringify(res));
+};

@@ -6,7 +6,6 @@ import {
   Form,
   FormGroup,
   Input,
-  InputGroup,
   Label,
   Modal,
   ModalBody,
@@ -16,15 +15,25 @@ import {
 } from "reactstrap";
 import { ApiService } from "../axios-config";
 import { toast } from "react-toastify";
+import { getUserLocal } from "../utils/statics";
 
-const FoodEntryModal = ({ toggle, isOpen, data, refetch, setWaring }) => {
+const FoodEntryModal = ({
+  toggle,
+  isOpen,
+  data,
+  refetch,
+  setWaring,
+  setPriceToggle,
+  setThresholdToggle,
+}) => {
   const { register, errors, handleSubmit, reset } = useForm();
   const [isLoading, setLoading] = useState(false);
-  const [currentDateTimeLocal, setCurrentDateTimeLocal] = useState(null);
 
+  // this method is used for the creating entry and update entry for the admin.
   const createUpdateFoodEntry = async (values) => {
     try {
-      values.userId = "62b848fd58f737232bc5d052";
+      let user = getUserLocal();
+      values.userId = user?._id;
       values.calorie = parseInt(values?.calorie);
       setLoading(true);
       let res;
@@ -41,6 +50,8 @@ const FoodEntryModal = ({ toggle, isOpen, data, refetch, setWaring }) => {
         res?.user?.thresholdWarning || res?.entry?.thresholdWarning;
       let priceWarning = res?.user?.priceWarning || res?.entry?.priceWarning;
       setWaring({ thresholdWarning, priceWarning });
+      setPriceToggle(priceWarning ? true : false);
+      setThresholdToggle(thresholdWarning ? true : false);
       toast.success(
         data ? "Entry Update Successfully!" : "Entry Created Successfully!"
       );
@@ -53,6 +64,7 @@ const FoodEntryModal = ({ toggle, isOpen, data, refetch, setWaring }) => {
     }
   };
 
+  // this method is used for the prefill user food entry data and set the date formate according to the input type
   const preFillData = () => {
     if (data) {
       data.foodDate = moment(data?.foodDate).format("YYYY-MM-DDTHH:mm");
@@ -62,31 +74,13 @@ const FoodEntryModal = ({ toggle, isOpen, data, refetch, setWaring }) => {
     }
   };
 
-  useEffect(() => preFillData(), [data]);
-
-  useEffect(() => {
-    const now = new Date();
-    const offset = now.getTimezoneOffset() * 60000;
-    const adjustedDate = new Date(now.getTime() - offset);
-
-    const inputDate = moment(adjustedDate).format("YYYY-MM-DDT12:00");
-
-    setCurrentDateTimeLocal(inputDate);
-
-    // if (candidateId) {
-    //   fetchingInterviewList();
-    // }
-
-    // eslint-disable-next-line
-  }, []);
+  useEffect(() => preFillData(), [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div>
       <Modal isOpen={isOpen} toggle={toggle} className="modal-lg">
         <Form onSubmit={handleSubmit(createUpdateFoodEntry)}>
-          <ModalHeader toggle={toggle}>
-            {data ? "Update" : "Crate"} Food Entry
-          </ModalHeader>
+          <ModalHeader>{data ? "Update" : "Crate"} Food Entry</ModalHeader>
           <ModalBody>
             <FormGroup>
               <Label for="foodName">
@@ -132,9 +126,9 @@ const FoodEntryModal = ({ toggle, isOpen, data, refetch, setWaring }) => {
               </Label>
 
               <Input
-                defaultValue={currentDateTimeLocal}
+                defaultValue={moment().format("YYYY-MM-DDTHH:mm")}
                 step="any"
-                max={moment().format("YYY-MM-DDTHH:mm:ss.SSS")}
+                max={moment().format("YYYY-MM-DDTHH:mm")}
                 min={null}
                 type="datetime-local"
                 name="foodDate"
@@ -177,7 +171,7 @@ const FoodEntryModal = ({ toggle, isOpen, data, refetch, setWaring }) => {
             </Button>
             <Button color="success" disabled={isLoading}>
               {isLoading && <Spinner size="sm" />}{" "}
-              {data ? "Edit Entry" : "Save Entry"}
+              {data ? "Update Entry" : "Save Entry"}
             </Button>{" "}
           </ModalFooter>
         </Form>

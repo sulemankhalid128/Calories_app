@@ -42,7 +42,7 @@ function checkUserAuth(req, res, next) {
     verifyUser(req, res, next);
   } else {
     let random = Math.floor(1000 + Math.random() * 9000);
-    req.body.userName = `Guest${random}`;
+    req.body.userName = `Guest${random}`; // here we create the guest user name
     req.body.role = ROLES.regular;
     user.createGuestUser(req, res, next);
   }

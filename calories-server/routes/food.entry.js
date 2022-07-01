@@ -6,21 +6,13 @@ const ROLES = require("../utilities/roles.constant");
 const { getToken } = require("../core/authentication");
 
 module.exports = {
-  getFoodEntry(req, res, next) {
-    return db
-      .getFoodEntryById(req.params.id)
-      .then((entry) =>
-        entry ? res.status(200).json(entry) : next({ nF: "Food Entry" })
-      )
-      .catch((err) => next(err));
-  },
-
   getFoodEntries(req, res, next) {
     const getFoodEntries = new GetFoodEntryQuery(
       req.query.limit || 10,
       Number(req.query.skip || 0),
       JSON.parse(req.query.searchFilter),
-      req?.decoded?._id
+      req?.params?.id,
+      req.query.sort
     );
     return Promise.all([
       getFoodEntries.getFoodEntries(),
@@ -118,6 +110,15 @@ module.exports = {
     } catch (error) {
       return next(error);
     }
+  },
+
+  getLimitExceedEntries(req, res, next) {
+    return db
+      .getReachedEntries(req.decoded?._id)
+      .then((entries) =>
+        entries ? res.status(200).json(entries) : next({ nF: "User" })
+      )
+      .catch((err) => next(err));
   },
 
   async getStats(req, res, next) {

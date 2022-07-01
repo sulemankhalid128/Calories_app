@@ -1,9 +1,4 @@
 import axios from "axios";
-// import store from "../stores/configureStore";
-
-const getAuthHeaders = () => ({
-  // Authorization: `Bearer ${store.getState().authStoreState.token}`,
-});
 
 // Add a request interceptor
 axios.interceptors.request.use(function (config) {
@@ -17,12 +12,7 @@ axios.defaults.baseURL = "http://localhost:3005";
 axios.interceptors.response.use(
   (res) => res.data,
   (err) => {
-    if (
-      err.response.status === 401
-      // err.response.data &&
-      // (err.response.data.code === 3 || err.response.data.code === 4)
-    ) {
-      // store.dispatch({ type: "LOGGED_OUT" });
+    if (err.response.status === 401) {
       throw err;
     }
     return Promise.reject(err.response);
@@ -30,59 +20,69 @@ axios.interceptors.response.use(
 );
 
 export const ApiService = {
-  // createUser(item) {
-
-  //   return axios.post("/user/create", item);
-  // },
-
-  editUser(id, data) {
-    return axios.put(`users/${id}/info`, data, { headers: getAuthHeaders() });
+  // this call used for the get user by is name
+  getUserByName(name) {
+    return axios.get(`find/user`, { params: { name } });
   },
 
+  // this call used to getting the reached days entries
+  getReachedDays() {
+    return axios.get(`/get/limit/exceeded`);
+  },
+
+  // this call is used for the creating food entry
   createFoodEntry(payload) {
     return axios.post(`/create/food/entry`, payload);
   },
 
+  // used for the delete user
   deleteUser(id) {
-    return axios.delete(`users/${id}`, { headers: getAuthHeaders() });
+    return axios.delete(`user/${id}`);
   },
-
-  getUserEntries({ userId, limit = 10, skip = 0, searchFilter }) {
+  // this is used for the getting user entries and filtering
+  getUserEntries({ userId, limit = 10, skip, searchFilter, sort }) {
     const params = {};
     params.skip = skip.toString();
     params.limit = limit.toString();
     params.searchFilter = searchFilter;
+    params.sort = sort;
     return axios.get(`/user/entries/${userId}`, { params });
   },
 
-  getUsers({ limit = 10, skip = 0 }) {
+  // this  call is used for the getting all user for admin
+  getUsers({ limit, skip }) {
     const params = {};
     params.skip = skip.toString();
     params.limit = limit.toString();
-
     return axios.get(`/users`, { params });
   },
 
+  // this call is used for the update user entry (admin)
   updateUserEntry(id, data) {
     return axios.put(`/update/user/entry/${id}`, data);
   },
 
+  // used to validate the admin with password
   validateAdmin(data) {
     return axios.post(`/admin/validate`, data);
   },
 
+  // deleting the user food entry
   deleteUserFoodEntry(id) {
     return axios.delete(`/remove/user/entry/${id}`);
   },
 
+  // this is used for refresh the user token is its expire
   refreshToken(userId) {
     return axios.post(`/refresh/token/${userId}`);
   },
 
+  // this is used for the set the new threshold limit of the user by passing id
   resetLimit(userId, threshold) {
     return axios.post(`/reset/threshold/${userId}`, { threshold });
   },
 
+  // getting stats of food entries for admin
   getStats() {
     return axios.get(`/get/stats`);
   },

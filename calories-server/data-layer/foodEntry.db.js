@@ -18,8 +18,8 @@ module.exports = {
     return foodEntryModal.findByIdAndRemove(id).select("_id");
   },
 
-  getFoodEntryById(_id) {
-    return foodEntryModal.findOne({ _id }).select("-__v").exec();
+  getReachedEntries(userId) {
+    return thresholdModal.find({ userId }).select("-__v").exec();
   },
 
   findTodayEntries(userId, date) {

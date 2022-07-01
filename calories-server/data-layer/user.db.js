@@ -18,6 +18,7 @@ module.exports = {
   getUserById(_id) {
     return usersModel.findOne({ _id }).select("-__v").exec();
   },
+
   getUserByName(name) {
     return usersModel.findOne({ name }).select("-__v").exec();
   },

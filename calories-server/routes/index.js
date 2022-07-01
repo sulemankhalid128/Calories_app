@@ -8,11 +8,11 @@ const Authorize = require("../core/authorization");
 router.post("/refresh/token/:id", user.refreshToken);
 router.post("/reset/threshold/:id", user.updateUserLimit);
 router.post("/create/food/entry", checkUserAuth, foodEntry.createFood);
-router.get("/user/entries", verifyUser, foodEntry.getFoodEntries);
-router.get("/find/user/:id", user.findUser);
+router.get("/find/user", user.getUserByName);
+router.get("/get/limit/exceeded", verifyUser, foodEntry.getLimitExceedEntries);
+router.get("/user/entries/:id", verifyUser, foodEntry.getFoodEntries);
 
 //admin route
-router.get("/user/entries/:id", verifyUser, foodEntry.getFoodEntries);
 router.put(
   "/update/user/entry/:id",
   verifyUser,
@@ -29,8 +29,5 @@ router.delete(
   foodEntry.removeFoodEntry
 );
 router.delete("/users/:id", verifyUser, Authorize.allowAdmin, user.removeUser);
-
-// router.get("/user/create", user.createGuestUser);
-// router.get("/get/food/:id", Authorize.allowAdmin, foodEntry.getFoodEntry);
 
 module.exports = router;

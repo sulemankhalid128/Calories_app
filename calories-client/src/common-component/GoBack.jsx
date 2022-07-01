@@ -4,8 +4,7 @@ import PrevImage from "../assets/images/back.svg";
 const GoBack = ({ history, url }) => {
   return (
     <div
-      className="previous-page cursor-pointer"
-      style={{ display: "inline-block" }}
+      style={{ display: "inline-block", cursor: "pointer" }}
       onClick={() => {
         if (url) {
           history.push({ pathname: url });
@@ -15,7 +14,7 @@ const GoBack = ({ history, url }) => {
       }}
     >
       <img src={PrevImage} alt="back" />{" "}
-      <span style={{ color: "#eaa827" }}>Back</span>
+      <span style={{ color: "rgb(59 60 54)" }}>Back</span>
     </div>
   );
 };

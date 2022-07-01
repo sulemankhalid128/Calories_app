@@ -7,14 +7,17 @@ const roles_enum = {
   message: "`{VALUE}` is not a valid user role.",
 };
 
-const usersSchema = new Schema({
-  name: { type: String, required: true },
-  token: { type: String, required: false },
-  threshold: {
-    type: Number,
-    default: 2100,
+const usersSchema = new Schema(
+  {
+    name: { type: String, required: true },
+    token: { type: String, required: false },
+    threshold: {
+      type: Number,
+      default: 2100,
+    },
+    role: { type: String, enum: roles_enum, default: "regular" },
   },
-  role: { type: String, enum: roles_enum, default: "regular" },
-});
+  { timestamps: { createdAt: true } }
+);
 
 module.exports = mongoose.model("User", usersSchema);

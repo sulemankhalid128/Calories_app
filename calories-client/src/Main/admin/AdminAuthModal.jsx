@@ -1,7 +1,6 @@
 import React from "react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
   Button,
@@ -15,34 +14,34 @@ import {
   Spinner,
 } from "reactstrap";
 import { ApiService } from "../../axios-config";
+import { setUserLocal } from "../../utils/statics";
 
+// this component is used for the admin authorization
 const AdminAuthModal = ({ toggle, isOpen }) => {
-  const history = useHistory();
   const { register, errors, handleSubmit } = useForm();
   const [loading, setLoading] = useState(false);
+
+  // this method is used for the authenticate the admin with password and set user info in the local storage
   const checkAdmin = async (values) => {
     try {
       setLoading(true);
       let res = await ApiService.validateAdmin({ ...values });
-      localStorage.clear();
-      localStorage.setItem("calories_token", res?.token);
-      localStorage.setItem("user", JSON.stringify(res));
+      setUserLocal(res);
       setLoading(false);
       toast.success("Admin Penal!");
-      history.push("/admin");
+      let ref = window.location.origin;
+      window.location.replace(`${ref}/admin`);
       toggle();
     } catch (error) {
       setLoading(false);
       let errMsg = error?.response.data?.msg;
-
       toast.error(errMsg);
       toggle();
     }
   };
   return (
     <Modal isOpen={isOpen} toggle={toggle} className="modal-md">
-      <ModalHeader toggle={toggle}>Admin Check</ModalHeader>
-
+      <ModalHeader>Admin Check</ModalHeader>
       <Form onSubmit={handleSubmit(checkAdmin)}>
         <ModalBody>
           <FormGroup>

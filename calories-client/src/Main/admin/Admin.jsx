@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button, Card, CardBody, Col, Row } from "reactstrap";
 import NoDataFound from "../../common-component/NoDataFound";
 import Loader from "../../common-component/Loader";
@@ -9,6 +9,8 @@ import VIEW_ICON from "../../assets/images/viewIcon.svg";
 import { ApiService } from "../../axios-config";
 import ConfirmPopUp from "../../common-component/Confermation";
 import { toast } from "react-toastify";
+import ReactPaginate from "react-paginate";
+import GoBack from "../../common-component/GoBack";
 
 const Admin = () => {
   const [users, setUsers] = useState([]);
@@ -16,24 +18,27 @@ const Admin = () => {
   const [deleteModal, setDeleteModal] = useState(false);
   const [userCount, setUserCount] = useState(0);
   const [userRecord, setUserRecord] = useState(null);
+  const [stats, setStats] = useState(null);
+  const [currentPage, setCurrentPage] = useState(0);
 
+  // this method is used for the fetch stats for admin
   const getStats = async () => {
     try {
-      // setIsLoading(true);
       let res = await ApiService.getStats();
-      // setUsers(res?.users);
-      // setUserCount(res?.count);
-      // setIsLoading(false);
-      debugger;
+      setStats(res);
     } catch (error) {
-      setIsLoading(false);
       console.log("error::", error);
     }
   };
+
+  // this method is used for getting the all user exist in our db
   const getUsers = async () => {
     try {
       setIsLoading(true);
-      let res = await ApiService.getUsers({ limit: 10, skip: 0 });
+      let res = await ApiService.getUsers({
+        limit: 10,
+        skip: currentPage * 10,
+      });
       setUsers(res?.users);
       setUserCount(res?.count);
       setIsLoading(false);
@@ -43,6 +48,7 @@ const Admin = () => {
     }
   };
 
+  // used for the delete user
   const deleteUser = async () => {
     try {
       await ApiService.deleteUser(userRecord?._id);
@@ -58,38 +64,36 @@ const Admin = () => {
   useEffect(() => {
     getUsers();
     getStats();
-  }, []);
+  }, [currentPage]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div>
+      <div className="mt-3">
+        <GoBack url="/" />
+      </div>
+
       <Row className="my-3">
-        <Col md="6">
+        <Col md="12">
           <Card className="stats-bg border-0 shadow-sm">
             <CardBody className="m-2 ">
-              <h4>Last 7 days / Previous Entries </h4>
-              <h5>23 / 50</h5>
-            </CardBody>
-          </Card>
-        </Col>
-        <Col md="6">
-          <Card className="stats-bg border-0 shadow-sm">
-            <CardBody className="m-2 ">
-              <div>
-                <h4>Calories Average</h4>
-                <h5>23</h5>
-              </div>
+              <h4 className="text-light">Last 7 days / Previous Entries </h4>
+              <h5 className="text-light">
+                {stats?.lastSevenDays || 0} / {stats?.previousWeek || 0}
+              </h5>
             </CardBody>
           </Card>
         </Col>
       </Row>
 
-      <h3 className="mt-5">All User</h3>
+      <h3 className="my-4">All User</h3>
 
       <TableLayout
         TableHeader={() => (
           <React.Fragment>
-            <th>#Id</th>
+            <th>#</th>
+            <th>user Id</th>
             <th> Name</th>
+            <th> Calories Avg</th>
             <th> Actions</th>
           </React.Fragment>
         )}
@@ -103,9 +107,11 @@ const Admin = () => {
               </tr>
             );
           }
+
           if (!isLoading && users?.length) {
             return users.map((item, index) => (
               <tr key={index}>
+                <th scope="row">{index + 1}</th>
                 <th scope="row">{item?._id}</th>
                 <td>
                   <Link
@@ -115,6 +121,7 @@ const Admin = () => {
                     {item?.name}
                   </Link>
                 </td>
+                <th scope="row">{(item?.averageCount).toFixed(2)}</th>
                 <td>
                   <Link
                     className="bg-transparent border-0 shadow-none"
@@ -136,6 +143,7 @@ const Admin = () => {
               </tr>
             ));
           }
+
           if (!users?.length && !isLoading) {
             return (
               <tr>
@@ -147,6 +155,27 @@ const Admin = () => {
           }
         }}
       />
+
+      {users?.length && (
+        <div className="mt-5 d-flex justify-content-end align-items-center">
+          <div className="pagination_width">
+            <ReactPaginate
+              previousLabel={"← Previous"}
+              nextLabel={"Next →"}
+              pageCount={Math.ceil(userCount / 10)}
+              onPageChange={(page) => {
+                setCurrentPage(page?.selected);
+              }}
+              containerClassName={"pagination"}
+              previousLinkClassName={"pagination__link"}
+              nextLinkClassName={"pagination__link"}
+              disabledClassName={"pagination__link--disabled"}
+              activeClassName={"pagination__link--active"}
+            />
+          </div>
+        </div>
+      )}
+
       <ConfirmPopUp
         confirmText="Are you sure you want to delete"
         isOpen={deleteModal}

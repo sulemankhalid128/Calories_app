@@ -5,7 +5,10 @@ import ErrorImage from "../assets/images/error-page.svg";
 
 const Page404 = () => {
   return (
-    <div className="page-not-found">
+    <div
+      className="justify-content-center align-items-center d-flex"
+      style={{ height: "50vh" }}
+    >
       <div className="inner">
         <Container>
           <img src={ErrorImage} alt="404 error" />
@@ -17,7 +20,7 @@ const Page404 = () => {
             back where you will meet us.
           </p>
 
-          <Link to="/">Go To Homepage</Link>
+          <Link to="/">Go Back</Link>
         </Container>
       </div>
     </div>
