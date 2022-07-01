@@ -121,7 +121,9 @@ const Admin = () => {
                     {item?.name}
                   </Link>
                 </td>
-                <th scope="row">{(item?.averageCount).toFixed(2)}</th>
+                <th scope="row">
+                  {item?.averageCount ? (item?.averageCount).toFixed(2) : 0}
+                </th>
                 <td>
                   <Link
                     className="bg-transparent border-0 shadow-none"
@@ -147,7 +149,7 @@ const Admin = () => {
           if (!users?.length && !isLoading) {
             return (
               <tr>
-                <td colSpan={3}>
+                <td colSpan={5}>
                   <NoDataFound />
                 </td>
               </tr>
@@ -156,7 +158,7 @@ const Admin = () => {
         }}
       />
 
-      {users?.length && (
+      {!!users?.length && (
         <div className="mt-5 d-flex justify-content-end align-items-center">
           <div className="pagination_width">
             <ReactPaginate

@@ -12,9 +12,9 @@ require("dotenv").config();
 var mongoose = require("mongoose");
 
 //Set up default mongoose connection
-var mongoDB = "mongodb://127.0.0.1/calories_app";
-// var mongoDB =
-//   "mongodb+srv://sulemankhalid128:Suleman321@cluster0.jsrlo.mongodb.net/?retryWrites=true&w=majority";
+// var mongoDB = "mongodb://127.0.0.1/calories_app";
+var mongoDB =
+  "mongodb://sulemankhalid128:Suleman321@cluster0-shard-00-00.jsrlo.mongodb.net:27017,cluster0-shard-00-01.jsrlo.mongodb.net:27017,cluster0-shard-00-02.jsrlo.mongodb.net:27017/?ssl=true&replicaSet=atlas-yhbjmj-shard-0&authSource=admin&retryWrites=true&w=majority";
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 
 //Get the default connection

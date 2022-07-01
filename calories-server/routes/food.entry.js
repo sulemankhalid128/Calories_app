@@ -32,6 +32,13 @@ module.exports = {
       )
       .catch((err) => next(err));
   },
+  deleteEntries(userId) {
+    try {
+      return db.deleteUserFoodEntry(userId);
+    } catch (error) {
+      throw error;
+    }
+  },
 
   updateFoodEntryInfo(req, res, next) {
     return db

@@ -26,7 +26,7 @@ const ConfirmPopUp = ({
   return (
     <div>
       <Modal isOpen={isOpen} toggle={() => toggle()} className={className}>
-        <ModalHeader toggle={() => toggle()}>{modalHeading}</ModalHeader>
+        <ModalHeader>{modalHeading}</ModalHeader>
         <ModalBody>
           <Row>
             <Col xs="12">

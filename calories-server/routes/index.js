@@ -28,6 +28,6 @@ router.delete(
   Authorize.allowAdmin,
   foodEntry.removeFoodEntry
 );
-router.delete("/users/:id", verifyUser, Authorize.allowAdmin, user.removeUser);
+router.delete("/user/:id", verifyUser, Authorize.allowAdmin, user.removeUser);
 
 module.exports = router;

@@ -11,7 +11,8 @@ function getToken(_id, userName, role) {
       userName,
       role: role,
     },
-    "MY_SECRET_KEY"
+    "MY_SECRET_KEY",
+    {}
   );
 }
 

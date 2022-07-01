@@ -17,6 +17,9 @@ module.exports = {
   deleteFoodEntry(id) {
     return foodEntryModal.findByIdAndRemove(id).select("_id");
   },
+  deleteUserFoodEntry(id) {
+    return foodEntryModal.deleteMany({ userId: id }).select("_id");
+  },
 
   getReachedEntries(userId) {
     return thresholdModal.find({ userId }).select("-__v").exec();

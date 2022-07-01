@@ -5,6 +5,7 @@ const successMessage = require("../utilities/utility").successMessageWrapper;
 const GetUserQuery = require("../data-layer/get.user.db");
 const ROLES = require("../utilities/roles.constant");
 const getToken = require("../core/authentication");
+const foodEntry = require("./food.entry");
 
 module.exports = {
   getUserByName(req, res, next) {
@@ -29,9 +30,7 @@ module.exports = {
             role: user?.role,
           },
           "MY_SECRET_KEY",
-          {
-            expiresIn: 60 * 60 * 24 * 7,
-          }
+          {}
         );
         if (token) {
           db.updateUserInfo(user?._id, { token }).then((user) => {
@@ -52,13 +51,18 @@ module.exports = {
       .catch((err) => next(err));
   },
 
-  removeUser(req, res, next) {
-    return db
-      .deleteUser(req.params.id)
-      .then((user) =>
-        user ? res.status(200).json(successMessage) : next({ nF: "User" })
-      )
-      .catch((err) => next(err));
+  async removeUser(req, res, next) {
+    try {
+      let user = await db.deleteUser(req.params.id);
+      if (user) {
+        await foodEntry.deleteEntries(req.params.id);
+        return res.status(200).json(successMessage);
+      } else {
+        next({ nF: "User" });
+      }
+    } catch (error) {
+      next(err);
+    }
   },
 
   findAdmin(req, res, next) {
@@ -95,7 +99,8 @@ module.exports = {
             userName: user?.name,
             role: user?.role,
           },
-          "MY_SECRET_KEY"
+          "MY_SECRET_KEY",
+          {}
         );
         if (token) {
           db.updateUserInfo(user?._id, { token }).then((user) =>
